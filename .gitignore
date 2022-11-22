@@ -1,0 +1,5 @@
+node_modules
+/rendor
+/.idea
+.idea/
+.env
