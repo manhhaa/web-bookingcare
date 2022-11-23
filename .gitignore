@@ -3,5 +3,4 @@
 /.idea
 .idea/
 .env
-package-lock.json
 package.json
