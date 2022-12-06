@@ -21,7 +21,7 @@ let handleUserLogin = (email, password) => {
       let isExist = await handleCheckEmail(email);
       if (isExist) {
         let user = await db.User.findOne({
-          attributes: ["email", "roleId", "password"],
+          attributes: ["email", "roleId", "password", "firstName", "lastName"],
           where: { email: email },
           raw: true,
         });
@@ -110,12 +110,14 @@ let createNewUser = (data) => {
           lastName: data.lastName,
           address: data.address,
           phoneNumber: data.phoneNumber,
-          gender: data.gender === "1" ? true : false,
-          roleId: data.roleId,
+          gender: data.gender,
+          positionId: data.position,
+          roleId: data.role,
+          image: data.avatar,
         });
         resolve({
           errCode: 0,
-          message: "ok",
+          message: "Create user success",
         });
       }
     } catch (e) {
@@ -136,8 +138,11 @@ let updateUser = (data) => {
         user.lastName = data.lastName;
         user.address = data.address;
         user.phoneNumber = data.phoneNumber;
-        user.gender = data.gender === "1" ? true : false;
+        user.gender = data.gender;
         user.roleId = data.roleId;
+        if (data.avatar) {
+          user.image = data.avatar;
+        }
         await user.save();
         resolve({
           errCode: 0,
@@ -181,10 +186,35 @@ let deleteUser = (userId) => {
   });
 };
 
+let handleGetAllcode = (typeInput) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!typeInput) {
+        resolve({
+          errCode: 1,
+          message: "Missing required parametter!",
+        });
+      } else {
+        let res = {};
+        let allcode = await db.Allcode.findAll({
+          where: { type: typeInput },
+          // raw: false,
+        });
+        res.errCode = 0;
+        res.data = allcode;
+        resolve(res);
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   handleUserLogin: handleUserLogin,
   hanldeGetAllUsers: hanldeGetAllUsers,
   createNewUser: createNewUser,
   updateUser: updateUser,
   deleteUser: deleteUser,
+  handleGetAllcode: handleGetAllcode,
 };
