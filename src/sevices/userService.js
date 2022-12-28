@@ -195,16 +195,20 @@ let handleGetAllcode = (typeInput) => {
           message: "Missing required parametter!",
         });
       } else {
-        let res = {};
+        console.log(typeInput)
         let allcode = await db.Allcode.findAll({
           where: { type: typeInput },
           // raw: false,
         });
-        res.errCode = 0;
-        res.data = allcode;
-        resolve(res);
+        console.log('check res: ', allcode)
+
+        resolve({
+          errCode: 0,
+          data: allcode
+        });
       }
     } catch (e) {
+      console.log(e)
       reject(e);
     }
   });
